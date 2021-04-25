@@ -24,7 +24,7 @@ THEN the deposits or expenses added while they were offline are added to their t
 
 ## Deployed Application
 
-LINK HERE
+https://frozen-bastion-70522.herokuapp.com/ 
 
 ## Questions
 
