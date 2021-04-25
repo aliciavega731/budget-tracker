@@ -1,18 +1,23 @@
+// Code adapted from in-class activity
+
 const APP_PREFIX = 'Budget-';
 const VERSION = 'version_01';
 const CACHE_NAME = APP_PREFIX + VERSION;
 const FILES_TO_CACHE = [
   '/',
   '/index.html',
-  '/favicon.ico',
   '/manifest.json',
-  '/app.js',
+  '/js/idb.js',
+  '/js/index.js',
   '/assets/css/style.css',
   '/assets/images/icons/icon-72x72.png',
   '/assets/images/icons/icon-96x96.png',
   '/assets/images/icons/icon-128x128.png',
-  '/assets/images/icons/icon-144x144.png'
-]
+  '/assets/images/icons/icon-144x144.png',
+  '/assets/images/icons/icon-192x192.png',
+  '/assets/images/icons/icon-384x384.png',
+  '/assets/images/icons/icon-512x512.png'
+];
 
 // Install the service worker
 self.addEventListener('install', function(evt) {
@@ -22,8 +27,6 @@ self.addEventListener('install', function(evt) {
       return cache.addAll(FILES_TO_CACHE);
     })
   );
-
-  self.skipWaiting();
 });
 
 // Activate the service worker and remove old data from the cache
@@ -40,8 +43,6 @@ self.addEventListener('activate', function(evt) {
       );
     })
   );
-
-  self.clients.claim();
 });
 
 // Intercept fetch requests
@@ -70,17 +71,4 @@ self.addEventListener('fetch', function(evt) {
 
     return;
   }
-
-  evt.respondWith(
-    fetch(evt.request).catch(function() {
-      return caches.match(evt.request).then(function(response) {
-        if (response) {
-          return response;
-        } else if (evt.request.headers.get('accept').includes('text/html')) {
-          // return the cached home page for all requests for html pages
-          return caches.match('/');
-        }
-      });
-    })
-  );
 });
