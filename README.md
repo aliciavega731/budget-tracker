@@ -4,6 +4,8 @@ Giving users a fast and easy way to track their money is important, but allowing
 
 This challenge required us to update an existing budget tracker application to allow for offline access and functionality.
 
+![Screenshot](./assets/budget-tracker.png)
+
 ## User Story
 
 ```md
@@ -24,8 +26,8 @@ THEN the deposits or expenses added while they were offline are added to their t
 
 ## Deployed Application
 
-https://frozen-bastion-70522.herokuapp.com/ 
+[Heroku](https://frozen-bastion-70522.herokuapp.com/)
 
 ## Questions
 
-If you have any other questions or concerns, please reach out via email aliciamvega94@gmail.com or via Github.
+If you have any other questions or concerns, please reach out via email aliciamvega94@gmail.com or via <a href="https://github.com/aliciavega731"> Github</a>.
