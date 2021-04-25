@@ -1,4 +1,4 @@
-// Code adapted from in-class activity
+// Code adapted from in-class activity and module 19 activity
 
 const APP_PREFIX = 'Budget-';
 const VERSION = 'version_01';
@@ -29,46 +29,45 @@ self.addEventListener('install', function(evt) {
   );
 });
 
-// Activate the service worker and remove old data from the cache
-self.addEventListener('activate', function(evt) {
-  evt.waitUntil(
-    caches.keys().then(keyList => {
-      return Promise.all(
-        keyList.map(key => {
-          if (key !== CACHE_NAME && key !== DATA_CACHE_NAME) {
-            console.log('Removing old cache data', key);
-            return caches.delete(key);
-          }
-        })
-      );
+// Delete outdated caches
+self.addEventListener('activate', function (e) {
+  e.waitUntil(
+    caches.keys().then(function (keyList) {
+      // `keyList` contains all cache names under your username.github.io
+      // filter out ones that has this app prefix to create keeplist
+      let cacheKeeplist = keyList.filter(function (key) {
+        return key.indexOf(APP_PREFIX);
+      })
+      // add current cache name to keeplist
+      cacheKeeplist.push(CACHE_NAME);
+
+      return Promise.all(keyList.map(function (key, i) {
+        if (cacheKeeplist.indexOf(key) === -1) {
+          console.log('deleting cache : ' + keyList[i] );
+          return caches.delete(keyList[i]);
+        }
+      }));
     })
   );
 });
 
-// Intercept fetch requests
-self.addEventListener('fetch', function(evt) {
-  if (evt.request.url.includes('/api/')) {
-    evt.respondWith(
-      caches
-        .open(DATA_CACHE_NAME)
-        .then(cache => {
-          return fetch(evt.request)
-            .then(response => {
-              // If the response was good, clone it and store it in the cache.
-              if (response.status === 200) {
-                cache.put(evt.request.url, response.clone());
-              }
 
-              return response;
-            })
-            .catch(err => {
-              // Network request failed, try to get it from the cache.
-              return cache.match(evt.request);
-            });
-        })
-        .catch(err => console.log(err))
-    );
+// Respond with cached resources
+self.addEventListener('fetch', function (e) {
+  console.log('fetch request : ' + e.request.url)
+  e.respondWith(
+    caches.match(e.request).then(function (request) {
+      if (request) { // if cache is available, respond with cache
+        console.log('responding with cache : ' + e.request.url)
+        return request
+      } else {       // if there are no cache, try fetching request
+        console.log('file is not cached, fetching : ' + e.request.url)
+        return fetch(e.request)
+      }
 
-    return;
-  }
-});
+      // You can omit if/else for console.log & put one line below like this too.
+      // return request || fetch(e.request)
+    })
+  )
+})
+
